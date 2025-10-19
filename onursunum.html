@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nanoteknoloji Araştırma Platformu | AkalınSoft</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0a84ff;
+            --secondary: #64d2ff;
+            --accent: #bf5af2;
+            --success: #30d158;
+            --warning: #ff9f0a;
+            --danger: #ff453a;
+            --dark: #000000;
+            --dark-light: #1c1c1e;
+            --dark-medium: #2c2c2e;
+            --dark-elevated: #3a3a3c;
+            --text: #f5f5f7;
+            --text-secondary: #98989d;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        /* Advanced Particle System */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animated Background Gradient */
+        .bg-gradient {
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            z-index: 0;
+            opacity: 0.15;
+            animation: gradientRotate 20s ease infinite;
+            background: radial-gradient(circle at 20% 50%, var(--primary) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, var(--accent) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, var(--secondary) 0%, transparent 50%);
+            filter: blur(80px);
+        }
+
+        @keyframes gradientRotate {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(28, 28, 30, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            z-index: 1000;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        nav.scrolled {
+            padding: 8px 0;
+            background: rgba(28, 28, 30, 0.85);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            list-style: none;
+            gap: 8px;
+            padding: 0 30px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            position: relative;
+            padding: 10px 18px;
+            border-radius: 12px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: block;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        nav a:hover::before {
+            left: 100%;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-3);
+            transform: translateX(-50%);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        nav a:hover {
+            color: var(--primary);
+            background: rgba(10, 132, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a:hover::after {
+            width: 80%;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-container {
+            position: relative;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(10, 132, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        .loader-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            border: 3px solid rgba(191, 90, 242, 0.1);
+            border-bottom-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite reverse;
+        }
+
+        .loading-text {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            padding-top: 80px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.2); opacity: 0.2; }
+        }
+
+        .hero-title {
+            font-size: clamp(45px, 10vw, 95px);
+            font-weight: 900;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: gradientShift 5s ease infinite, fadeInUp 1.2s ease;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(20px, 4vw, 28px);
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto 50px;
+            animation: fadeInUp 1.2s ease 0.3s backwards;
+            font-weight: 400;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Team Grid */
+        .team-section {
+            padding: 150px 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(40px, 8vw, 75px);
+            font-weight: 800;
+            margin-bottom: 100px;
+            background: linear-gradient(135deg, #fff 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            letter-spacing: -1px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--gradient-3);
+            border-radius: 2px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 50px;
+            margin-bottom: 150px;
+        }
+
+        /* Enhanced 3D Card */
+        .team-card {
+            perspective: 2000px;
+            height: 550px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .team-card.no-flip {
+            cursor: default;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+        }
+
+        .team-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 30px;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.7));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+            transition: all 0.5s ease;
+        }
+
+        .card-front {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px;
+            position: relative;
+        }
+
+        .card-front::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--primary), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            to { transform: rotate(360deg); }
+        }
+
+        .team-card:hover .card-front::before {
+            opacity: 0.15;
+        }
+
+        .card-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(10, 132, 255, 0.2), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .team-card:hover .card-glow {
+            opacity: 1;
+        }
+
+        .card-image-wrapper {
+            position: relative;
+            margin-bottom: 35px;
+        }
+
+        .card-image {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid transparent;
+            background: linear-gradient(var(--dark), var(--dark)) padding-box,
+                        var(--gradient-3) border-box;
+            box-shadow: 0 0 50px rgba(10, 132, 255, 0.5),
+                        0 0 100px rgba(10, 132, 255, 0.2);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            z-index: 2;
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .team-card:hover .card-image {
+            transform: scale(1.08) translateY(-10px);
+            box-shadow: 0 0 70px rgba(10, 132, 255, 0.7),
+                        0 0 140px rgba(10, 132, 255, 0.3);
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: var(--gradient-3);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.5;
+            animation: pulse-ring 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .card-name {
+            margin-top: 10px;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            pointer-events: none;
+        }
+
+        .card-title {
+            color: var(--text-secondary);
+            font-size: 17px;
+            font-weight: 500;
+            margin-top: 12px;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: var(--gradient-3);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(10, 132, 255, 0.4);
+            animation: badge-float 3s ease-in-out infinite;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        @keyframes badge-float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            padding: 50px 35px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-back::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .card-back::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb {
+            background: var(--gradient-3);
+            border-radius: 10px;
+        }
+
+        .card-back::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: var(--primary);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 5px 25px rgba(10, 132, 255, 0.5);
+        }
+
+        .card-back h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .card-back p {
+            margin-bottom: 25px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .card-back h4 {
+            font-size: 20px;
+            margin: 30px 0 15px;
+            color: var(--secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-back ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .card-back li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+            margin-left: 10px;
+        }
+
+        .card-back li:hover {
+            color: var(--text);
+            border-left-color: var(--primary);
+            padding-left: 40px;
+        }
+
+        .card-back li::before {
+            content: '→';
+            position: absolute;
+            left: 10px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* Research Sections */
+        .research-section {
+            padding: 150px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .research-content {
+            background: linear-gradient(145deg, rgba(28, 28, 30, 0.9), rgba(44, 44, 46, 0.7));
+            backdrop-filter: blur(20px);
+            border-radius: 35px;
+            padding: 70px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(10, 132, 255, 0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .research-content:hover::before {
+            left: 100%;
+        }
+
+        .research-content:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 40px 120px rgba(10, 132, 255, 0.3),
+                        0 0 80px rgba(10, 132, 255, 0.1);
+            border-color: rgba(10, 132, 255, 0.3);
+        }
+
+        /* Simulation Section */
+        .simulation-container {
+            background: linear-gradient(145deg, rgba(28, 28, 30, 0.95), rgba(44, 44, 46, 0.8));
+            backdrop-filter: blur(20px);
+            border-radius: 35px;
+            padding: 60px;
+            border: 2px solid rgba(10, 132, 255, 0.2);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+            margin: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .simulation-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--primary), transparent);
+            opacity: 0.05;
+            animation: rotate 8s linear infinite;
+        }
+
+        .simulation-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .simulation-header h3 {
+            font-size: 42px;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+
+        .simulation-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .slider-container {
+            margin: 50px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .slider-label span {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .slider-value {
+            background: var(--gradient-3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 20px;
+            box-shadow: 0 5px 20px rgba(10, 132, 255, 0.4);
+        }
+
+        .slider-wrapper {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(to right, 
+                var(--dark-elevated) 0%, 
+                var(--primary) var(--slider-percent, 0%), 
+                var(--dark-elevated) var(--slider-percent, 0%));
+            outline: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gradient-3);
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(10, 132, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 40px rgba(10, 132, 255, 1);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--gradient-3);
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(10, 132, 255, 0.8);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 35px 30px;
+            border-radius: 25px;
+            border: 2px solid rgba(10, 132, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.1), rgba(191, 90, 242, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .metric-card:hover::before {
+            opacity: 1;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(10, 132, 255, 0.4);
+        }
+
+        .metric-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-value {
+            font-size: 36px;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-change.positive {
+            color: var(--success);
+        }
+
+        .metric-change.negative {
+            color: var(--danger);
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin-top: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-item {
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .progress-percent {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient-3);
+            border-radius: 10px;
+            transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Usage Grid */
+        .usage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 35px;
+            margin: 50px 0;
+        }
+
+        .usage-item {
+            background: rgba(10, 132, 255, 0.05);
+            padding: 40px 30px;
+            border-radius: 25px;
+            border: 2px solid rgba(10, 132, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .usage-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--primary), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            animation: rotate 3s linear infinite;
+        }
+
+        .usage-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .usage-item:hover {
+            border-color: var(--primary);
+            background: rgba(10, 132, 255, 0.15);
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(10, 132, 255, 0.4),
+                        0 0 60px rgba(10, 132, 255, 0.2);
+        }
+
+        .usage-number {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .usage-name {
+            font-size: 19px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            color: var(--text);
+        }
+
+        /* Chemical Equations */
+        .equation-container {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 25px;
+            padding: 45px;
+            margin: 45px 0;
+            border-left: 5px solid var(--primary);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .equation-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 0;
+            background: var(--gradient-3);
+            transition: height 0.5s ease;
+        }
+
+        .equation-container:hover::before {
+            height: 100%;
+        }
+
+        .equation-container:hover {
+            border-left-width: 10px;
+            box-shadow: 0 15px 50px rgba(10, 132, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .equation-title {
+            font-size: 22px;
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .equation-title::before {
+            content: '⚛';
+            font-size: 28px;
+        }
+
+        .equation {
+            font-size: 26px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            color: var(--secondary);
+            line-height: 2.2;
+            letter-spacing: 3px;
+            font-weight: 500;
+            padding: 20px;
+            background: rgba(100, 210, 255, 0.05);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .equation:hover {
+            background: rgba(100, 210, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        /* PDF Download Button */
+        .pdf-download {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            padding: 35px 40px;
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.1), rgba(100, 210, 255, 0.1));
+            border-radius: 25px;
+            margin: 45px 0;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 2px solid rgba(10, 132, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-download::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateY(-50%);
+            transition: left 0.6s ease;
+        }
+
+        .pdf-download:hover::before {
+            left: 100%;
+        }
+
+        .pdf-download:hover {
+            transform: translateX(15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 15px 50px rgba(10, 132, 255, 0.4);
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(100, 210, 255, 0.2));
+        }
+
+        .pdf-icon {
+            width: 70px;
+            height: 70px;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            filter: drop-shadow(0 5px 15px rgba(10, 132, 255, 0.3));
+        }
+
+        .pdf-download:hover .pdf-icon {
+            transform: scale(1.15) rotate(10deg);
+            filter: drop-shadow(0 8px 25px rgba(10, 132, 255, 0.5));
+        }
+
+        .pdf-text {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .pdf-text h4 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .pdf-text p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Procedure Text */
+        .procedure-text {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 35px;
+            border-radius: 20px;
+            margin: 35px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            line-height: 1.9;
+            font-size: 15px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .procedure-text:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(10, 132, 255, 0.2);
+        }
+
+        .procedure-text strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Expandable Experiments */
+        .experiment-container {
+            margin: 40px 0;
+        }
+
+        .experiment-toggle {
+            background: linear-gradient(135deg, rgba(10, 132, 255, 0.15), rgba(191, 90, 242, 0.15));
+            padding: 25px 35px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 2px solid rgba(10, 132, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .experiment-toggle:hover {
+            border-color: var(--primary);
+            transform: translateX(10px);
+            box-shadow: 0 10px 40px rgba(10, 132, 255, 0.3);
+        }
+
+        .experiment-toggle h4 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+
+        .toggle-icon {
+            font-size: 24px;
+            transition: transform 0.4s ease;
+            color: var(--primary);
+        }
+
+        .experiment-toggle.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .experiment-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .experiment-content.active {
+            max-height: 2000px;
+        }
+
+        .experiment-content-inner {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 35px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .experiment-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .experiment-steps li {
+            padding: 15px 0;
+            padding-left: 45px;
+            position: relative;
+            border-left: 3px solid rgba(10, 132, 255, 0.2);
+            margin-left: 20px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .experiment-steps li:hover {
+            border-left-color: var(--primary);
+            padding-left: 50px;
+        }
+
+        .experiment-steps li::before {
+            content: attr(data-step);
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 5px 20px rgba(10, 132, 255, 0.4);
+        }
+
+        /* Characterization Section */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 35px;
+            margin: 50px 0;
+        }
+
+        .char-item {
+            background: linear-gradient(145deg, rgba(10, 132, 255, 0.1), rgba(191, 90, 242, 0.1));
+            padding: 45px 35px;
+            border-radius: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 2px solid rgba(10, 132, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .char-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .char-item:hover::before {
+            opacity: 0.1;
+        }
+
+        .char-item:hover {
+            transform: translateY(-15px) scale(1.05);
+            border-color: var(--primary);
+            box-shadow: 0 25px 60px rgba(10, 132, 255, 0.4);
+        }
+
+        .char-icon {
+            font-size: 55px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .char-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, transparent, rgba(28, 28, 30, 0.9));
+            padding: 80px 20px 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-size: 36px;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .copyright strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Fade In Animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .team-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+            
+            .research-content,
+            .simulation-container {
+                padding: 50px 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 5px;
+                padding: 0 15px;
+            }
+
+            nav a {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .research-content,
+            .simulation-container {
+                padding: 35px 25px;
+            }
+
+            .equation {
+                font-size: 18px;
+                letter-spacing: 1px;
+            }
+
+            .usage-grid,
+            .char-grid,
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pdf-download {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-title {
+                letter-spacing: -1px;
+            }
+        }
+
+        /* Scroll Animation */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--primary);
+            color: var(--text);
+        }
+
+        /* Additional Morph Effects */
+        @keyframes morph {
+            0%, 100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
+            50% {
+                border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+            }
+        }
+
+        .morph-shape {
+            animation: morph 8s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <div class="loader-inner"></div>
+        </div>
+        <div class="loading-text">Yükleniyor...</div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <ul>
+            <li><a href="#home">Ana Sayfa</a></li>
+            <li><a href="#team">Araştırma Ekibi</a></li>
+            <li><a href="#simulation">AgNP Triboloji Simülasyonu</a></li>
+            <li><a href="#applications">Ag NP Kullanım Alanları</a></li>
+            <li><a href="#synthesis">AgNp Hazırlanması</a></li>
+            <li><a href="#nabh4">AgNp NaBH₄ Prosedür</a></li>
+            <li><a href="#cystine">Cystine Hazırlama</a></li>
+            <li><a href="#disulfide">Disülfide Bağları</a></li>
+            <li><a href="#characterization">Karakterizasyon</a></li>
+        </ul>
+    </nav>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Hero Section -->
+        <section id="home" class="hero">
+            <h1 class="hero-title">Nanoteknoloji Araştırma Platformu</h1>
+            <p class="hero-subtitle">Gümüş Nanopartikül Sentezi ve Karakterizasyonu Üzerine İleri Düzey Bilimsel Çalışmalar</p>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="team-section fade-in">
+            <h2 class="section-title">Araştırma Ekibi</h2>
+            <div class="team-grid">
+                <!-- Prof. Dr. İlker AVAN -->
+                <div class="team-card" id="card1" onclick="flipCard('card1')">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-glow"></div>
+                            <span class="card-badge">Profesör</span>
+                            <div class="card-image-wrapper morph-shape">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFaC19GMWja9Q5N1lk-0LLeBl3u3J9yzQzPA&s" alt="Prof. Dr. İlker AVAN" class="card-image">
+                            </div>
+                            <h3 class="card-name">Prof. Dr. İlker AVAN</h3>
+                            <p class="card-title">Kimya Profesörü</p>
+                        </div>
+                        <div class="card-back">
+                            <button class="close-btn" onclick="event.stopPropagation(); flipCard('card1')">✕</button>
+                            <h3>Prof. Dr. İlker AVAN</h3>
+                            <p>Kimya alanında uluslararası düzeyde tanınan, üretken ve disiplinler arası çalışan bir bilim insanıdır. Organik kimya, inorganik sentez, nanoteknoloji ve biyolojik uygulamalar gibi geniş bir yelpazede bilimsel katkılar sunmuştur.</p>
+                            
+                            <h4>🧪 Akademik İlgi Alanları</h4>
+                            <ul>
+                                <li>Organik ve inorganik sentez</li>
+                                <li>Nanopartikül tasarımı ve karakterizasyonu</li>
+                                <li>Katalizör geliştirme ve oksidasyon reaksiyonları</li>
+                                <li>Liken türevli doğal ürünlerin biyolojik etkileri</li>
+                                <li>Yağlayıcı katkı maddeleri ve tribolojik analizler</li>
+                            </ul>
+
+                            <h4>📚 Bilimsel Yayınlardan Öne Çıkanlar</h4>
+                            <ul>
+                                <li>Aqueous biphasic oxidation çalışmasında Cd(II)-bazlı kompleks ile seçici alkol oksidasyonu üzerine özgün bir katalizör geliştirmiştir</li>
+                                <li>DHLA ligandlarıyla altın nanopartikül sentezi üzerine fotokimyasal yöntemlerle katalitik ve peroksidaz benzeri aktiviteler</li>
+                                <li>ZnS ve ZnO nanopartiküllerinin yağlayıcı katkısı üzerine tribolojik performans çalışmaları</li>
+                                <li>Liken türevli bileşiklerin anti-kanser etkileri üzerine sitotoksik ve anti-invaziv özellikler</li>
+                                <li>Peptidomimetik sentezleri ve HIV-1 füzyon inhibitörleri üzerine ilaç tasarımı katkıları</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dr. Alper Uğur -->
+                <div class="team-card" id="card2" onclick="flipCard('card2')">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-glow"></div>
+                            <span class="card-badge">Doktor</span>
+                            <div class="card-image-wrapper morph-shape">
+                                <img src="https://i1.rgstatic.net/ii/profile.image/1002627672317952-1616056473414_Q512/Alper-Ugur.jpg" alt="Dr. Alper Uğur" class="card-image">
+                            </div>
+                            <h3 class="card-name">Dr. Alper Uğur</h3>
+                            <p class="card-title">Malzeme Bilimi Uzmanı</p>
+                        </div>
+                        <div class="card-back">
+                            <button class="close-btn" onclick="event.stopPropagation(); flipCard('card2')">✕</button>
+                            <h3>Dr. Alper Uğur</h3>
+                            <p>Malzeme bilimi, triboloji, yüzey teknolojileri ve analitik kimya alanlarında çok yönlü ve disiplinler arası çalışmalarıyla öne çıkan bir araştırmacıdır. Akademik üretkenliği, hem temel bilim hem de uygulamalı mühendislik alanlarında ulusal ve uluslararası düzeyde etkili yayınlarla desteklenmektedir.</p>
+                            
+                            <h4>🔬 Akademik İlgi Alanları</h4>
+                            <ul>
+                                <li>Tribolojik sistemler ve yağlayıcı katkı maddeleri</li>
+                                <li>Nanopartikül sentezi ve yüzey modifikasyonu</li>
+                                <li>Atomik katman biriktirme (ALD) ve ince film teknolojileri</li>
+                                <li>Elektrokimyasal ve kromatografik analiz yöntemleri</li>
+                                <li>Ray teknolojileri ve demiryolu sistemleri üzerine mühendislik çalışmaları</li>
+                            </ul>
+
+                            <h4>📚 Bilimsel Yayınlardan Öne Çıkanlar</h4>
+                            <ul>
+                                <li>Kullanılmış motor yağının çimento ve selit adsorbanlarıyla iyileştirilmesi ve tribolojik performans geliştirme</li>
+                                <li>ZnS ve ZnO nanopartiküllerinin yağlayıcı katkısı olarak sentez parametrelerinin aşınma direnci etkileri</li>
+                                <li>LiNi₀.₅Mn₁.₅O₄ temelli katot malzemelerinde katkı miktarının kapasite tutulumuna etkisi</li>
+                                <li>ALD yöntemiyle hBN üzerine Al₂O₃ adalarının büyütülmesi ve yüzey kaplama teknolojileri</li>
+                                <li>İlaç analizinde kapiler elektroforez ve HPLC yöntemlerinin optimizasyonu</li>
+                                <li>Ray yüzeyindeki soyulmaların metalografik incelemelerle analizi</li>
+                                <li>Demiryolu sektörünün küresel gelişimi ve Türkiye'nin konumu değerlendirmesi</li>
+                                <li>Lösemi hücrelerinde apoptozu tetikleyen süperparamanyetik nanopartiküller</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onur Akalın -->
+                <div class="team-card no-flip">
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <div class="card-glow"></div>
+                            <span class="card-badge">Araştırmacı</span>
+                            <div class="card-image-wrapper morph-shape">
+                                <img src="https://via.placeholder.com/220/1c1c1e/0a84ff?text=O.A." alt="Onur Akalın" class="card-image">
+                            </div>
+                            <h3 class="card-name">Onur Akalın</h3>
+                            <p class="card-title">Araştırmacı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AgNP Tribology Simulation -->
+        <section id="simulation" class="research-section fade-in">
+            <h2 class="section-title">AgNP Tribolojik Etki Simülasyonu</h2>
+            <div class="simulation-container">
+                <div class="simulation-header">
+                    <h3>Gümüş Nanopartikül Konsantrasyonu ve Motor Performansı</h3>
+                    <p>AgNP konsantrasyonunu ayarlayarak tribolojik özelliklerdeki değişimleri gerçek zamanlı gözlemleyin</p>
+                </div>
+
+                <div class="slider-container">
+                    <div class="slider-label">
+                        <span>AgNP Konsantrasyonu</span>
+                        <span class="slider-value" id="concentrationValue">0.0%</span>
+                    </div>
+                    <div class="slider-wrapper">
+                        <input type="range" id="agNpSlider" min="0" max="100" value="0" step="1">
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">⚡</div>
+                        <div class="metric-label">Motor Verimliliği</div>
+                        <div class="metric-value" id="efficiency">50%</div>
+                        <div class="metric-change positive" id="efficiencyChange">-</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">🌡️</div>
+                        <div class="metric-label">Çalışma Sıcaklığı</div>
+                        <div class="metric-value" id="temperature">95°C</div>
+                        <div class="metric-change negative" id="tempChange">-</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">💎</div>
+                        <div class="metric-label">Aşınma Direnci</div>
+                        <div class="metric-value" id="wear">45%</div>
+                        <div class="metric-change positive" id="wearChange">-</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⚙️</div>
+                        <div class="metric-label">Sürtünme Katsayısı</div>
+                        <div class="metric-value" id="friction">0.085</div>
+                        <div class="metric-change negative" id="frictionChange">-</div>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Yağlayıcı Performansı</span>
+                            <span class="progress-percent" id="lubricantPercent">50%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="lubricantBar" style="width: 50%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Beklenen Motor Ömrü</span>
+                            <span class="progress-percent" id="lifespanPercent">60%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="lifespanBar" style="width: 60%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Enerji Tasarrufu</span>
+                            <span class="progress-percent" id="energyPercent">0%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="energyBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ag NP Applications -->
+        <section id="applications" class="research-section fade-in">
+            <h2 class="section-title">Ag NP Kullanım Alanları</h2>
+            <div class="research-content">
+                <div class="usage-grid">
+                    <div class="usage-item">
+                        <div class="usage-number">1</div>
+                        <div class="usage-name">Antimikrobiyal</div>
+                    </div>
+                    <div class="usage-item">
+                        <div class="usage-number">2</div>
+                        <div class="usage-name">Elektronik</div>
+                    </div>
+                    <div class="usage-item">
+                        <div class="usage-number">3</div>
+                        <div class="usage-name">Kimyasal/Biyolojik Sensör</div>
+                    </div>
+                    <div class="usage-item">
+                        <div class="usage-number">4</div>
+                        <div class="usage-name">Kozmetik</div>
+                    </div>
+                    <div class="usage-item">
+                        <div class="usage-number">5</div>
+                        <div class="usage-name">Farmastatik</div>
+                    </div>
+                </div>
+
+                <div class="pdf-download" onclick="window.open('https://www.researchgate.net/publication/383687267_Silver_Nanoparticles_Synthesis_Structure_Properties_and_Applications', '_blank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/977px-PDF_file_icon.svg.png" alt="PDF" class="pdf-icon">
+                    <div class="pdf-text">
+                        <h4>Makaleyi İndir</h4>
+                        <p>Silver Nanoparticles: Synthesis, Structure, Properties, and Applications</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AgNp Synthesis -->
+        <section id="synthesis" class="research-section fade-in">
+            <h2 class="section-title">AgNp Hazırlanması</h2>
+            <div class="research-content">
+                <div class="equation-container">
+                    <div class="equation-title">Bor hidrür ile indirgeme</div>
+                    <div class="equation">
+                        Ag<sup>+</sup> + BH<sub>4</sub><sup>−</sup> + 3H<sub>2</sub>O → Ag<sup>0</sup> + H<sub>3</sub>BO<sub>3</sub> + 3.5H<sub>2</sub>
+                    </div>
+                </div>
+
+                <div class="equation-container">
+                    <div class="equation-title">Askorbik asit ile indirgeme</div>
+                    <div class="equation">
+                        2Ag<sup>+</sup> + C<sub>6</sub>H<sub>8</sub>O<sub>6</sub> → 2Ag<sup>0</sup> + C<sub>6</sub>H<sub>6</sub>O<sub>6</sub> + 2H<sup>+</sup>
+                    </div>
+                </div>
+
+                <div class="pdf-download" onclick="window.open('https://pmc.ncbi.nlm.nih.gov/articles/PMC4326978/', '_blank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/977px-PDF_file_icon.svg.png" alt="PDF" class="pdf-icon">
+                    <div class="pdf-text">
+                        <h4>Makaleye Gidin</h4>
+                        <p>Silver Nanoparticle Synthesis and Characterization Methods</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NaBH4 Procedure -->
+        <section id="nabh4" class="research-section fade-in">
+            <h2 class="section-title">AgNp NaBH₄ Prosedür</h2>
+            <div class="research-content">
+                <div class="procedure-text">
+                    Gümüş nanopartiküller, <strong>sodyum borohidrit (NaBH₄)</strong> birincil indirgeyici olarak ve <strong>trisodyum sitrat (TSC)</strong>, hem ikincil indirgeyici hem de stabilize edici ajan olarak kullanılarak sentezlendi. İndirgeme işlemleri, sırasıyla sodyum borohidrit ve trisodyum sitratın aracılık ettiği iki farklı sıcaklıkta, yani <strong>60 °C ve 90 °C'de</strong> gerçekleştirildi.
+                    <br><br>
+                    <strong>Tipik Prosedür:</strong>
+                    <br><br>
+                    NaBH₄ ve TSC içeren taze hazırlanmış sulu çözeltilerin gerekli hacimleri karıştırıldı ve homojen bir çözelti elde etmek için kuvvetlice karıştırılarak karanlıkta <strong>30 dakika boyunca 60 °C'ye</strong> ısıtıldı. 30 dakikanın sonunda gerekli AgNO₃ çözelti karışıma <strong>damla damla</strong> ilave edildi ve ardından sıcaklık <strong>90 °C'ye</strong> yükseltildi. 
+                    <br><br>
+                    Sıcaklık 90 °C'ye ulaştığında, çözeltinin pH'ı <strong>0,1 M NaOH</strong> kullanılarak <strong>10,5'e</strong> ayarlandı ve ısıtmaya renk değişikliği görülene kadar <strong>20 dakika</strong> devam edildi. Nanopartikül süspansiyonunun oda sıcaklığında soğumasına izin verildi.
+                    <br><br>
+                    Reaksiyona girmemiş indirgeyicileri uzaklaştırmak için, AgNP süspansiyonları <strong>12.000 rpm'de 15 dakika</strong> santrifüjlendi ve <strong>üç kez yıkandı</strong>, ardından DI suyunda yeniden dağıtıldı ve son olarak ileride kullanılmak üzere <strong>4 °C'de</strong> saklandı.
+                    <br><br>
+                    AgNP'lerin verimini belirlemek için, oluşturulan gümüş nanopartiküller <strong>14.000 rpm'de 20 dakika</strong> santrifüjleme ile toplandı, seyreltik HNO₃ içinde çözüldü ve AgNP'ler formundaki toplam gümüş kütlesi, <strong>endüktif olarak eşleştirilmiş plazma-atomik emisyon spektroskopisi (ARCOS ICP-AES)</strong> ile belirlendi.
+                </div>
+
+                <div class="pdf-download" onclick="window.open('https://pubs.rsc.org/en/content/articlehtml/2014/ra/c3ra44507k', '_blank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/977px-PDF_file_icon.svg.png" alt="PDF" class="pdf-icon">
+                    <div class="pdf-text">
+                        <h4>Makaleye Gitmek İçin Tıklayınız</h4>
+                        <p>Synthesis and characterization of silver nanoparticles using NaBH₄</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cystine Procedure -->
+        <section id="cystine" class="research-section fade-in">
+            <h2 class="section-title">Cystine Hazırlanan Prosedür</h2>
+            <div class="research-content">
+                <div class="procedure-text">
+                    <strong>L-sistein ile modifiye edilmiş CD'ler</strong> literatürde açıklanan protokollere göre sentezlendi. Spesifik olarak, <strong>5 g limon kabuğu</strong> yıkandı ve durulandı, ardından bir fırında <strong>200 °C'de bir saat</strong> kalsine edildi. Kalsinasyondan sonra numuneler öğütüldü ve kahverengi toz elde etmek için elendi.
+                    <br><br>
+                    Toz elde edildikten sonra <strong>5 g, 50 mL DI su</strong> içinde dağıtıldı ve ardından <strong>0.05 g L-sistein</strong> ilave edildi. Elde edilen karışım bir Teflon'a aktarıldı, otoklavda kapatıldı ve son olarak <strong>180 °C'de beş saat</strong> fırına yerleştirildi. Ayrılan süreden sonra otoklav oda sıcaklığına soğutuldu.
+                    <br><br>
+                    Nihai çözelti santrifüjlendi, kolloidal formda cCD'leri toplamak için filtrelendi. Bu cCD'ler, sensör tasarımında kullanılabilecek birden fazla yüzey fonksiyonel grubuna sahip olabilir.
+                    <br><br>
+                    <strong>cCD'ler/AgNP'ler sentezi:</strong>
+                    <br><br>
+                    <strong>250 μL</strong> önceki cCD'ler <strong>200 mL DI su</strong> içinde dağıtıldı. Daha sonra karıştırılarak <strong>0,01 g AgNO₃</strong> bu cCD çözeltisinde çözüldü. AgNO₃ tamamen çözüldükten sonra, bu karışıma <strong>0.025 g NaOH</strong> ilave edildi (hemen sarı-kahverengi renkte görünür).
+                    <br><br>
+                    Daha sonra, cCD'lerin fonksiyonel gruplarının aktivitesini arttırmak için geniş spesifik yüzey alanına sahip AgNP'lerin kullanıldığı cCD'leri/AgNP'leri elde etmek için reaksiyon sistemi <strong>5 saat boyunca</strong> hafif manyetik karıştırma altında <strong>65 °C'ye</strong> ısıtıldı.
+                </div>
+
+                <div class="pdf-download" onclick="window.open('https://www.sciencedirect.com/science/article/pii/S2046206925024337', '_blank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/977px-PDF_file_icon.svg.png" alt="PDF" class="pdf-icon">
+                    <div class="pdf-text">
+                        <h4>Makaleye Gitmek İçin Tıklayınız</h4>
+                        <p>L-cysteine modified carbon dots and silver nanoparticles synthesis</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disulfide Bonds -->
+        <section id="disulfide" class="research-section fade-in">
+            <h2 class="section-title">Disülfide Bağları</h2>
+            <div class="research-content">
+                <div class="experiment-container">
+                    <div class="experiment-toggle" onclick="toggleExperiment(1)">
+                        <h4>Deney 1: Surfaktan ile AgNP Sentezi</h4>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="experiment-content" id="experiment1">
+                        <div class="experiment-content-inner">
+                            <div class="procedure-text">
+                                Bir milimol surfaktan, yuvarlak altlı bir balonda <strong>10 ml çözücüde</strong> çözüldü (DSPBr için etanol, DSPC ve DSPE için deiyonize su). Ardından, <strong>10 ml deiyonize suda</strong> çözülmüş <strong>6,5 mmol sodyum borohidrür</strong> eklendi ve karışım <strong>30 dakika boyunca</strong> karıştırıldı.
+                                <br><br>
+                                Daha sonra, <strong>10 ml deiyonize suda</strong> çözülmüş <strong>5 mmol gümüş nitrat çözeltisi</strong> damla damla karıştırıldı. Tepkime, <strong>4000 rpm hızla</strong> karıştırılarak yaklaşık <strong>0°C'de 1 saat</strong>, ardından <strong>oda sıcaklığında 1 saat</strong> daha yürütüldü. Böylece "ham" (prime) gümüş nanoparçacıkları elde edildi.
+                                <br><br>
+                                Ham ürün, eşit miktarda asetonla karıştırıldı ve <strong>10.000 rpm'de 5 dakika</strong> santrifüj edildi. Üstteki katman dökülerek çözücüsü buharlaştırıldı. Kalan nanoparçacık çökeltisi, ultrasonik banyoda su içinde yeniden dispersiyona (dağıtıma) uğratıldı ve ardından <strong>0,22 µm'lik filtreden</strong> geçirildi.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="experiment-container">
+                    <div class="experiment-toggle" onclick="toggleExperiment(2)">
+                        <h4>Deney 2: SDDC ile AgNP Sentezi</h4>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="experiment-content" id="experiment2">
+                        <div class="experiment-content-inner">
+                            <ul class="experiment-steps">
+                                <li data-step="1">20 mL suda <strong>0.25 mM AgNO₃</strong> ve <strong>2.5 mM SDDC</strong> çözüldü</li>
+                                <li data-step="2">Karışım manyetik karıştırıcıda oda sıcaklığında karıştırılırken, <strong>0.6 mL 10 mM NaBH₄</strong> çözeltisi 6 kez (her 30 saniyede 0.1 mL) damla damla eklendi</li>
+                                <li data-step="3">Renk hemen <strong>koyu kahverengiye</strong> döndü</li>
+                                <li data-step="4"><strong>30 s</strong> daha karıştırıldıktan sonra <strong>4000 rpm'de 30 dk</strong> santrifüj edildi</li>
+                                <li data-step="5">Çökelek <strong>4 mL saf suda</strong> yeniden dispersiyona uğratıldı</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pdf-download" onclick="window.open('https://pubs.acs.org/doi/10.1021/acs.analchem.8b01974', '_blank')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/977px-PDF_file_icon.svg.png" alt="PDF" class="pdf-icon">
+                    <div class="pdf-text">
+                        <h4>Makaleye Gitmek İçin Tıklayınız</h4>
+                        <p>Disulfide bond-based silver nanoparticle synthesis and applications</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Characterization -->
+        <section id="characterization" class="research-section fade-in">
+            <h2 class="section-title">Karakterizasyon</h2>
+            <div class="research-content">
+                <div class="char-grid">
+                    <div class="char-item" onclick="window.open('https://drive.google.com/drive/u/0/folders/1ltLw3giN64FZHbzHQyg8NDXGhntPKfPz', '_blank')">
+                        <div class="char-icon">📊</div>
+                        <div class="char-name">UV-Vis Spektroskopi</div>
+                    </div>
+                    <div class="char-item" onclick="window.open('https://drive.google.com/drive/u/0/folders/1ltLw3giN64FZHbzHQyg8NDXGhntPKfPz', '_blank')">
+                        <div class="char-icon">🔬</div>
+                        <div class="char-name">TEM Görüntüleme</div>
+                    </div>
+                    <div class="char-item" onclick="window.open('https://drive.google.com/drive/u/0/folders/1ltLw3giN64FZHbzHQyg8NDXGhntPKfPz', '_blank')">
+                        <div class="char-icon">🔍</div>
+                        <div class="char-name">SAM Analizi</div>
+                    </div>
+                    <div class="char-item" onclick="window.open('https://drive.google.com/drive/u/0/folders/1ltLw3giN64FZHbzHQyg8NDXGhntPKfPz', '_blank')">
+                        <div class="char-icon">⚡</div>
+                        <div class="char-name">X-Ray Kırınımı</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">AkalınSoft</div>
+            <p class="copyright">
+                <strong>Bütün haklar AkalınSoft'a aittir.</strong><br>
+                Kopyalanması mümkün değildir. © 2024
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Particle Canvas Animation
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        const numberOfParticles = 100;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = `rgba(10, 132, 255, ${Math.random() * 0.5})`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+
+                for (let j = i; j < particlesArray.length; j++) {
+                    const dx = particlesArray[i].x - particlesArray[j].x;
+                    const dy = particlesArray[i].y - particlesArray[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(10, 132, 255, ${0.2 - distance / 500})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[i].x, particlesArray[i].y);
+                        ctx.lineTo(particlesArray[j].x, particlesArray[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Card Flip Function - COMPLETELY REWRITTEN
+        function flipCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (card && !card.classList.contains('no-flip')) {
+                card.classList.toggle('flipped');
+            }
+        }
+
+        // Card Mouse Move Effect
+        document.querySelectorAll('.team-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+
+                if (!card.classList.contains('flipped') && !card.classList.contains('no-flip')) {
+                    const rotateX = (y - 50) / 5;
+                    const rotateY = (50 - x) / 5;
+                    card.querySelector('.card-inner').style.transform = 
+                        `perspective(2000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                if (!card.classList.contains('flipped') && !card.classList.contains('no-flip')) {
+                    card.querySelector('.card-inner').style.transform = '';
+                }
+            });
+        });
+
+        // AgNP Simulation
+        const slider = document.getElementById('agNpSlider');
+        const concentrationValue = document.getElementById('concentrationValue');
+        const efficiency = document.getElementById('efficiency');
+        const temperature = document.getElementById('temperature');
+        const wear = document.getElementById('wear');
+        const friction = document.getElementById('friction');
+        const efficiencyChange = document.getElementById('efficiencyChange');
+        const tempChange = document.getElementById('tempChange');
+        const wearChange = document.getElementById('wearChange');
+        const frictionChange = document.getElementById('frictionChange');
+        const lubricantBar = document.getElementById('lubricantBar');
+        const lubricantPercent = document.getElementById('lubricantPercent');
+        const lifespanBar = document.getElementById('lifespanBar');
+        const lifespanPercent = document.getElementById('lifespanPercent');
+        const energyBar = document.getElementById('energyBar');
+        const energyPercent = document.getElementById('energyPercent');
+
+        slider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            const percent = value / 100;
+
+            // Update slider gradient
+            slider.style.setProperty('--slider-percent', value + '%');
+
+            // Concentration
+            concentrationValue.textContent = (value / 10).toFixed(1) + '%';
+
+            // Motor Efficiency: 50% -> 78%
+            const effValue = 50 + (percent * 28);
+            efficiency.textContent = effValue.toFixed(1) + '%';
+            efficiencyChange.textContent = value > 0 ? `+${(effValue - 50).toFixed(1)}%` : '-';
+            efficiencyChange.className = 'metric-change positive';
+
+            // Temperature: 95°C -> 72°C
+            const tempValue = 95 - (percent * 23);
+            temperature.textContent = tempValue.toFixed(0) + '°C';
+            tempChange.textContent = value > 0 ? `-${(95 - tempValue).toFixed(0)}°C` : '-';
+            tempChange.className = 'metric-change negative';
+
+            // Wear Resistance: 45% -> 92%
+            const wearValue = 45 + (percent * 47);
+            wear.textContent = wearValue.toFixed(0) + '%';
+            wearChange.textContent = value > 0 ? `+${(wearValue - 45).toFixed(0)}%` : '-';
+            wearChange.className = 'metric-change positive';
+
+            // Friction Coefficient: 0.085 -> 0.032
+            const frictionValue = 0.085 - (percent * 0.053);
+            friction.textContent = frictionValue.toFixed(3);
+            frictionChange.textContent = value > 0 ? `-${((0.085 - frictionValue) * 100).toFixed(1)}%` : '-';
+            frictionChange.className = 'metric-change negative';
+
+            // Lubricant Performance: 50% -> 95%
+            const lubValue = 50 + (percent * 45);
+            lubricantBar.style.width = lubValue + '%';
+            lubricantPercent.textContent = lubValue.toFixed(0) + '%';
+
+            // Lifespan: 60% -> 100%
+            const lifeValue = 60 + (percent * 40);
+            lifespanBar.style.width = lifeValue + '%';
+            lifespanPercent.textContent = lifeValue.toFixed(0) + '%';
+
+            // Energy Saving: 0% -> 18%
+            const energyValue = percent * 18;
+            energyBar.style.width = energyValue + '%';
+            energyPercent.textContent = energyValue.toFixed(1) + '%';
+        });
+
+        // Experiment Toggle
+        function toggleExperiment(num) {
+            const content = document.getElementById('experiment' + num);
+            const toggle = content.previousElementSibling;
+            
+            toggle.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        // Fade In Animation on Scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth Scroll for Navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                window.scrollTo({
+                    top: targetSection.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Parallax Effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.4}px)`;
+                hero.style.opacity = 1 - scrolled / 700;
+            }
+        });
+
+        // Disable right-click and text selection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+    </script>
+</body>
+</html>
